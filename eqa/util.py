@@ -64,12 +64,15 @@ def find_ms_str_index(ms, keyword, is_first=False):
 def ms_handler_image(ms, msg_diy=False, cache_dir='', dir_name='img', b64=False):
     url = str(ms['data']['url'] if ms['data'].get('url') else ms['data']['file']).strip()
     if not url:
+        print('ms_handler_image url False: ' + url)
         return False
     if msg_diy and url[0] == '?':
+        print('ms_handler_image msg_diy False: ' + url[0])
         return MessageSegment.image(url[1:])
     try:
         pic = requests.get(url, timeout=30)
-    except requests.exceptions.ConnectionError:
+    except requests.exceptions.ConnectionError as ex:
+        print('ms_handler_image ex False: ' + ex)
         return False
     base64_suffix = '.base64' if b64 else ''
     file_name = get_path(cache_dir, dir_name, f'{uuid.uuid1().hex}.{imghdr.what(None, pic.content)}{base64_suffix}')
